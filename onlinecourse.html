@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Online Course Apply</title>
+	<!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <!--link href="bootstrap-markdown/css/bootstrap-markdown.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css"/>-->
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="bootstrap/js/html5shiv.min.js"></script>
+      <script src="bootstrap/js/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="chosen/chosen.min.css" />
+    <style type="text/css">
+	.chosen-select {
+		width: 400px;
+	}
+    </style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<h2 class="text-center">Cascade Selection Form</h2>
+			<form action="#" method="post" class="form-horizontal">
+				<div class="form-group">
+					<label for="inputEmail3" class="col-sm-2 control-label">Department</label>
+					<div class="col-sm-10">
+						<select name="department" multiple="multiple" class="chosen-select form-control department" style="height: 24px !important;">
+							<option value="1">Computer Science</option>
+							<option value="2">Chemical</option>
+							<option value="3">Biological</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputEmail3" class="col-sm-2 control-label">Major</label>
+					<div class="col-sm-10">
+						<select name="major" multiple="multiple" class="chosen-select form-control major">
+						</select>
+					</div>
+				</div>
+
+			</form>
+		</div>
+	</div>
+	
+</body>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="jquery/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/chosen.jquery.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		// option template
+		var options_template = '<option value={0}>{1}</option>';
+
+		// define the json
+		var department = '[{"depId":1,"depName":"Computer Science"},{"depId":2,"depName":"Chemical"},{"depId":3,"depName":"Biological"}]';
+
+		// load the department
+		var dep_options = '';
+		$.each($.parseJSON(department), function(index, item) {
+			dep_options += options_template.format(item.depId, item.depName);
+		});
+
+		$('.department').html('').append(dep_options);
+
+		$('.chosen-select').chosen();
+		
+		var major = '[{"depId":1,"majorId":1,"majorName":"Network"},{"depId":1,"majorId":2,"majorName":"Software"},{"depId":2,"majorId":1,"majorName":"Test-Dep-1"},{"depId":2,"majorId":2,"majorName":"Test-Dep-2"},{"depId":2,"majorId":3,"majorName":"Test-Dep-3"},{"depId":3,"majorId":1,"majorName":"Bio-Test-1"}]';
+
+		$('.department').change(function() {
+			$('.major').html('');
+			// loop the major
+			var options_store = '';
+			$.each($(this).val(), function(index, item) {
+				var select_dep_id = item;
+				var group_name = '';
+
+				// get the department name group option name
+				$.each($.parseJSON(department), function(index, item) {
+					if(select_dep_id == item.depId) {
+						group_name = item.depName;
+					}
+				});
+				options_store += '<optgroup label=' + group_name + '>';
+				// get the major options
+				$.each($.parseJSON(major), function(key, node) {
+					if(node.depId == select_dep_id) {
+						options_store += options_template.format(node.majorId, node.majorName);
+					}
+				});
+				options_store += '</optgroup>';
+			});
+			$('.major').append(options_store).trigger('chosen:updated');
+		});
+
+		
+	});
+
+	// define the format global function
+	String.prototype.format = function() {
+		if(arguments.length == 0) {
+			return "";
+		}
+
+			var target = this;
+		for(var i = 0; i < arguments.length; i++) {
+			var re = new RegExp('\\{' + i + '\\}', 'gm');
+			target = target.replace(re, arguments[i]);
+		}
+
+		return target;
+		
+	}
+</script>
+</html>
